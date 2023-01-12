@@ -4,11 +4,14 @@
   "root": true,
   "extends": [
       "plugin:prettier/recommended",
-      "prettier"
+      "prettier",
+      "airbnb-base",
+      "airbnb-typescript/base"
   ],
   "parserOptions": {
       "ecmaVersion": 2020,
-      "sourceType": "module"
+      "sourceType": "module",
+      "project": ["./tsconfig.json"]
   },
   "env": {
       "es6": true,
