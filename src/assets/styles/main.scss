@@ -5,9 +5,10 @@ body {
 	background-image: 
 		linear-gradient(135deg, rgba(0,0,0, 0.2) 0%, rgba(0,0,0, 0.1) 25%, rgba(0,0,0, 0.2) 50%, rgba(0,0,0, 0.1) 75%, rgba(0,0,0, 0.2) 100%), 
 		linear-gradient(90deg, #192129, #303641, #484e57);
-	background-size: 8px 8px, 100%;
-  font: $main-font;
+	background-size: 6px 6px, 100%;
+  font-family: $main-font;
   font-size: 24px;
+  user-select: none;
 }
 
 .header {
@@ -39,7 +40,7 @@ h1 {
   font-size: 40px;
   font-weight: bold;
   line-height: 50px;
-  color: #FFF;
+  color: $text;
   font-family: 'Roboto', sans-serif;
   text-transform: uppercase;
   text-shadow: 0 -40px 100px, 0 0 2px, 0 0 1em #BFE2FF, 0 0 0.5em #BFE2FF, 0 0 0.1em #BFE2FF;
@@ -87,8 +88,113 @@ h1 span {
   flex-direction: column;
 }
 
-.garage__car-img {
-  fill:rgba(209, 201, 201, 0.5);
-  width: 80px;
-  height: 25px;
+.h3 {
+  color: $text;
+  margin: 20px auto;
+}
+
+.garage {
+  padding: 5px;
+
+  &__controls {
+    display: flex;
+    flex-direction: column;
+    margin: 10px 0;
+    gap: 10px;    
+  }
+
+  &__create-wrap,
+  &__update-wrap,
+  &__main-settings-wrap {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  &__create-text-input,
+  &__update-text-input {
+    width: 182px;    
+  }
+
+  &__create-color-input,
+  &__update-color-input {
+    appearance: none;
+    -moz-appearance: none;
+    -webkit-appearance: none;
+    background: none;
+    border: 0;    
+    height: 28px;
+    padding: 0;
+    width: 28px;
+    color: aquamarine;
+    cursor: pointer;
+  }
+
+  &__create-btn,
+  &__update-btn {
+    width: 60px;
+    height: 100%;
+    cursor: pointer;
+  }
+
+  &__main-settings-race-btn {
+    width: 80px;
+    cursor: pointer;
+  }
+
+  &__main-settings-reset-btn {
+    width: 100px;
+    cursor: pointer;
+  }
+
+  &__main-settings-generate-btn {
+    width: 120px;
+    cursor: pointer;
+  }
+
+  &__all-cars-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  &__car-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 10px
+  }
+
+  &__per-car-set-wrap {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    height: 20px;
+  }
+
+  &__select-btn,
+  &__revove-btn,
+  &__start-btn,
+  &__stop-btn {
+    display: block;
+    cursor: pointer;
+  }
+
+  &__car-name {
+    margin: 0;
+    font-size: 20px;
+    color: $text;
+  }
+
+  &__per-car-wrap {
+    display: flex;
+    gap: 10px;
+    border-bottom: $text dashed 1px;
+    font-size: 32px;
+  }
+
+  &__car-img {
+    fill:rgba(209, 201, 201, 0.5);
+    width: 80px;
+    height: 25px;
+  }  
 }
