@@ -9,7 +9,7 @@ export interface IGetCarsHead {
   carsCount: number;
 }
 
-export interface ICreateCars {
+export interface ICreateCar {
   name: string;
   color: string;
 }

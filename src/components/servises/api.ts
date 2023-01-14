@@ -1,5 +1,4 @@
-/* eslint-disable import/prefer-default-export */
-import { IGetCars, IGetCarsHead } from '../models/models';
+import { IGetCars, IGetCarsHead, ICreateCar } from '../models/models';
 import { saveState } from '../servises/state';
 
 const GARAGE: string = 'http://127.0.0.1:3000/garage/';
@@ -20,9 +19,21 @@ export async function getCars(pageCount: number, limitCars: number = LIMIT): Pro
   };
 }
 
-// 
+//post car to server
+export async function createCar(body: ICreateCar): Promise<IGetCars> {
+  return (
+    await fetch(GARAGE, {
+      method: 'POST',
+      body: JSON.stringify(body),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+  ).json();
+}
 
 
+//
 
 // Get Car
 // Create Car
