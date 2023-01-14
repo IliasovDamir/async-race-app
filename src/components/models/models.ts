@@ -4,6 +4,11 @@ export interface IGetCars {
   id: number;
 }
 
+export interface IGetCarsHead {
+  arrCars: IGetCars[];
+  carsCount: number;
+}
+
 export interface ICreateCars {
   name: string;
   color: string;
@@ -19,3 +24,5 @@ export interface ICreateWinner {
   wins: number;
   time: number;
 }
+
+

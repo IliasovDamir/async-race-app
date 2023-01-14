@@ -1,4 +1,6 @@
 import { IGetCars } from '../models/models';
+import { saveState } from '../servises/state';
+import { getCars } from '../servises/api';
 
 const body: HTMLElement | null = document.querySelector('body');
 
@@ -68,23 +70,7 @@ function renderCars(arrCars: IGetCars[]): HTMLElement {
 // function renderCarsWrap(): string {
 //   return `<div class="garage__all-cars-wrap">${renderCars()}</div>`;
 // }
-const arrCars: IGetCars[] = [
-  {
-    "name": "Tesla",
-    "color": "#e6e6fa",
-    "id": 1,
-  },
-  {
-    "name": "Tesla",
-    "color": "#e6e6fa",
-    "id": 1,
-  },
-  {
-    "name": "Tesla",
-    "color": "#e6e6fa",
-    "id": 1,
-  },
-];
+
 
 function renderPageGarage(pageGarageCount: number): string {
   return `<h4 class="h4">Page #<span>${pageGarageCount}</span></h4>
@@ -94,13 +80,14 @@ function renderPageGarage(pageGarageCount: number): string {
     </div>`;
 }
 
-function renderGaragePage(): void {
+async function renderGaragePage(): Promise<void> {
   if (main) {
     main.classList.add('garage');
     main.innerHTML = renderGarageControls();
-    main.innerHTML += renderTitleGarage(3);
+    const { arrCars, carsCount } = await getCars(saveState.pageGarageCount);
+    main.innerHTML += renderTitleGarage(carsCount);
     main.append(renderCars(arrCars));
-    main.innerHTML += renderPageGarage(3);
+    main.innerHTML += renderPageGarage(saveState.pageGarageCount);
   }
 }
 renderGaragePage();
