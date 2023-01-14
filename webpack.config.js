@@ -5,10 +5,9 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 const isDev = process.env.NODE_ENV === 'development';
-const isProd = !isDev;
 
 function showMode() {
-  let mode = isDev ? 'Development' : 'Production';
+  const mode = isDev ? 'Development' : 'Production';
   console.log(`---------- MODE: ${mode} ----------`);
 }
 showMode();
