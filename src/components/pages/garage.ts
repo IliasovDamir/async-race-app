@@ -1,6 +1,16 @@
 import { IGetCars, ICreateCar } from '../models/models';
 import { saveState } from '../servises/state';
-import { getCars, setCar, removeCar } from '../servises/api';
+import {
+  getCars,
+  setCar,
+  removeCar,
+  updateNameColorCar,
+  updateCar,
+  inputsObjValue,
+  resetInputsObjValue,
+  onlockUpdateInputs,
+} from '../servises/api';
+import { createOptionsForInput } from '../servises/cars-brands';
 
 export const body: HTMLElement | null = document.querySelector('body');
 
@@ -24,14 +34,17 @@ if (body) {
 function renderGarageControls(): string {
   return `<div class="garage__controls">
     <div class="garage__create-wrap">
-      <input type="text" class="garage__create-text-input" placeholder="Enter car name">
+      <input type="text" class="garage__create-text-input" placeholder="Enter car name" list="cars">
+      <datalist id="cars">
+      ${createOptionsForInput()}      
+      </datalist>
       <input type="color" class="garage__create-color-input" value="#a6ca16">
       <button class="garage__create-btn">Create</button>
     </div>
     <div class="garage__update-wrap">
-      <input type="text" class="garage__update-text-input" placeholder="Change car name">
-      <input type="color" class="garage__update-color-input" value="#d039b7">
-      <button class="garage__update-btn">Update</button>
+      <input type="text" class="garage__update-text-input" placeholder="Change car name" disabled>
+      <input type="color" class="garage__update-color-input" value="#d039b7" disabled>
+      <button class="garage__update-btn" disabled>Update</button>
     </div>
     <div class="garage__main-settings-wrap">
       <button class="garage__main-settings-race-btn">Race</button>
@@ -57,8 +70,8 @@ function renderCars(arrCars: IGetCars[]): HTMLElement {
   arrCars.forEach((el) => {
     inner += `<div class="garage__car-wrap">
     <div class="garage__per-car-set-wrap">
-      <button class="garage__select-btn" car-id=${el.id}>Select</button>
-      <button class="garage__remove-btn" car-id=${el.id}>Remove</button>
+      <button class="garage__select-btn" car-name="${el.name}" car-id="${el.id}">Select</button>
+      <button class="garage__remove-btn" car-id="${el.id}">Remove</button>
       <p class="garage__car-name">${el.name}</p>
     </div>
     <div class="garage__per-car-wrap">
@@ -85,6 +98,32 @@ export async function renderGaragePage(): Promise<void> {
     if (createCarBtn) createCarBtn.addEventListener('click', () => setCar());
     const deleteCarBnts: NodeListOf<HTMLElement> = document.querySelectorAll('.garage__remove-btn');
     deleteCarBnts.forEach((el) => el.addEventListener('click', () => removeCar(el)));
+    const updateCarBnts: NodeListOf<HTMLElement> = document.querySelectorAll('.garage__select-btn');
+    updateCarBnts.forEach((el) => el.addEventListener('click', () => updateNameColorCar(el)));
+    const updateCarTextInput: HTMLInputElement | null = document.querySelector('.garage__update-text-input');
+    if (updateCarTextInput) {
+      updateCarTextInput.onchange = () => {
+        inputsObjValue.name = updateCarTextInput.value;
+        console.log(inputsObjValue);
+      };
+    }
+    const updateCarColorInput: HTMLInputElement | null = document.querySelector('.garage__update-color-input');
+    if (updateCarColorInput) {
+      updateCarColorInput.onchange = () => {
+        inputsObjValue.color = updateCarColorInput.value;
+        console.log(inputsObjValue);
+      };
+    }
+    const updateCarBtn = document.querySelector('.garage__update-btn');
+    if (updateCarBtn) {
+      updateCarBtn.addEventListener('click', () => {
+        updateCar(inputsObjValue.id, { name: inputsObjValue.name, color: inputsObjValue.color });
+        resetInputsObjValue();
+        onlockUpdateInputs(true);
+        renderGaragePage();
+      });
+    }
+
   }
 }
 

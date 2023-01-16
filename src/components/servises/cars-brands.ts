@@ -238,3 +238,11 @@ export const carBrandsSubName: string[] = [
 
 export const CARS_ARR_FIRST_NAME_LENGTH: number = carsBrandsFirstName.length;
 export const CARS_ARR_SUB_NAME_LENGTH: number = carBrandsSubName.length;
+
+export function createOptionsForInput(): string {
+  let options = '';
+  carsBrandsFirstName.forEach((el) => {
+    options += `<option value="${el}">`;
+  });
+  return options;
+}
