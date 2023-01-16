@@ -2,5 +2,3 @@
 export const saveState = {
   pageGarageCount: 1,
 };
-
-

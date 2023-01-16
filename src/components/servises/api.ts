@@ -11,9 +11,6 @@ export async function getCars(pageCount: number, limitCars: number = LIMIT): Pro
   const resp = await fetch(`${GARAGE}?_page=${pageCount}&_limit=${limitCars}`);
   const arrCars: IGetCars[] = await resp.json();
   const carsCount: number = await Number(resp.headers.get('X-Total-Count'));
-
-  console.log('carItems:::', arrCars);
-  console.log('carsCount:::', carsCount);
   return {
     arrCars,
     carsCount,
@@ -51,14 +48,16 @@ export async function setCar(): Promise<void> {
 }
 
 // delete car
-// export async function deleteCar(): Promise<void> {
- 
-// }
+export async function deleteCar(id: number) {
+  return (await fetch(`${GARAGE}${id}`, { method: 'DELETE' })).json();
+}
 
-// const deleteCarBnts: NodeListOf<Element> = document.querySelectorAll('.garage__remove-btn');
-// deleteCarBnts.forEach((el) => {
-//   el.addEventListener('click', deleteCar());
-// });
+export async function removeCar(el: HTMLElement) {
+  const id = Number(el.getAttribute('car-id'));
+  await deleteCar(id);
+  await renderGaragePage();
+}
+
 
 //
 
