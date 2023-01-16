@@ -1,11 +1,12 @@
 import { IGetCars, IGetCarsHead, ICreateCar } from '../models/models';
 // import { saveState } from '../servises/state';
 import { renderGaragePage } from '../pages/garage';
+import { saveState } from './state';
 
 const GARAGE: string = 'http://127.0.0.1:3000/garage/';
 const ENGINE: string = 'http://127.0.0.1:3000/engine/';
 const WINNERS: string = 'http://127.0.0.1:3000/winners/';
-const LIMIT: number = 7;
+export const LIMIT: number = 7;
 
 export const inputsObjValue: IGetCars = {
   name: 'New car',
@@ -56,7 +57,7 @@ export async function setCar(): Promise<void> {
     color: (createCarColorInput as HTMLInputElement).value,
   };
   await createCar(newCar);
-  await renderGaragePage();
+  await renderGaragePage(saveState.pageGarageCount);
 }
 
 // delete car
@@ -67,7 +68,7 @@ export async function deleteCar(id: number) {
 export async function removeCar(el: HTMLElement) {
   const id = Number(el.getAttribute('car-id'));
   await deleteCar(id);
-  await renderGaragePage();
+  await renderGaragePage(saveState.pageGarageCount);
 }
 
 // update car

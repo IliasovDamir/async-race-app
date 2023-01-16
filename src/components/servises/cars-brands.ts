@@ -1,4 +1,4 @@
-export const carsBrandsFirstName: string[] = [
+export const carFirstName: string[] = [
   'Acura',
   'Adler',
   'Alfa Romeo',
@@ -160,7 +160,7 @@ export const carsBrandsFirstName: string[] = [
 ];
 
 // eslint-disable-next-line import/prefer-default-export
-export const carBrandsSubName: string[] = [
+export const carSubName: string[] = [
   'A3',
   'A4',
   'A4 allroad quattro',
@@ -236,12 +236,9 @@ export const carBrandsSubName: string[] = [
   'Verna',
 ];
 
-export const CARS_ARR_FIRST_NAME_LENGTH: number = carsBrandsFirstName.length;
-export const CARS_ARR_SUB_NAME_LENGTH: number = carBrandsSubName.length;
-
 export function createOptionsForInput(): string {
   let options = '';
-  carsBrandsFirstName.forEach((el) => {
+  carFirstName.forEach((el) => {
     options += `<option value="${el}">`;
   });
   return options;

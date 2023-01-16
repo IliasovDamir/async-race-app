@@ -259,6 +259,7 @@ h1 span {
     display: flex;
     flex-direction: column;
     gap: 10px;
+    transition: all 0.5s;
   }
 
   &__car-wrap {

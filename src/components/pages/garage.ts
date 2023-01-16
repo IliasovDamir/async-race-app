@@ -9,8 +9,10 @@ import {
   inputsObjValue,
   resetInputsObjValue,
   onlockUpdateInputs,
+  LIMIT,
 } from '../servises/api';
 import { createOptionsForInput } from '../servises/cars-brands';
+import { getRandom100Cars } from '../servises/generate-cars';
 
 export const body: HTMLElement | null = document.querySelector('body');
 
@@ -57,7 +59,7 @@ function renderGarageControls(): string {
 function renderTitleGarage(carsCount: number, pageGarageCount: number): string {
   return `<div class="garage__title-wrap">
     <h3 class="h3">Garage <span>(${carsCount})</span></h3>
-    <h4 class="h4">Page #<span>${pageGarageCount}</span></h4>    
+    <h4 class="h4">Page #<span>${pageGarageCount}/${pagination(carsCount, LIMIT)}</span></h4>    
     <button class="garage__page-settings-prev-btn">prev</button>
     <button class="garage__page-settings-next-btn">next</button>
   </div>`;
@@ -85,13 +87,33 @@ function renderCars(arrCars: IGetCars[]): HTMLElement {
   return carsWrapper;
 }
 
+// pagination
+export function pagination(carsCount: number, limitCars: number = LIMIT) {
+  saveState.allPageGarage = Math.ceil(carsCount / limitCars);
+  return saveState.allPageGarage;
+}
+
+async function getPrevPage(): Promise<void> {
+  if (saveState.pageGarageCount > 1) {
+    saveState.pageGarageCount -= 1;
+    await getCars(saveState.pageGarageCount);
+  };
+}
+
+async function getNextPage(): Promise<void> {
+  if (saveState.pageGarageCount < saveState.allPageGarage) {
+    saveState.pageGarageCount += 1;
+    await getCars(saveState.pageGarageCount);
+  };
+}
+
 // eslint-disable-next-line import/prefer-default-export
-export async function renderGaragePage(): Promise<void> {
+export async function renderGaragePage(page: number): Promise<void> {
   if (main) {
     main.classList.add('garage');
     main.innerHTML = '';
     main.innerHTML = renderGarageControls();
-    const { arrCars, carsCount } = await getCars(saveState.pageGarageCount);
+    const { arrCars, carsCount } = await getCars(page);
     main.innerHTML += renderTitleGarage(carsCount, saveState.pageGarageCount);
     main.append(renderCars(arrCars));
     const createCarBtn = document.querySelector('.garage__create-btn');
@@ -104,14 +126,12 @@ export async function renderGaragePage(): Promise<void> {
     if (updateCarTextInput) {
       updateCarTextInput.onchange = () => {
         inputsObjValue.name = updateCarTextInput.value;
-        console.log(inputsObjValue);
       };
     }
     const updateCarColorInput: HTMLInputElement | null = document.querySelector('.garage__update-color-input');
     if (updateCarColorInput) {
       updateCarColorInput.onchange = () => {
         inputsObjValue.color = updateCarColorInput.value;
-        console.log(inputsObjValue);
       };
     }
     const updateCarBtn = document.querySelector('.garage__update-btn');
@@ -120,21 +140,37 @@ export async function renderGaragePage(): Promise<void> {
         updateCar(inputsObjValue.id, { name: inputsObjValue.name, color: inputsObjValue.color });
         resetInputsObjValue();
         onlockUpdateInputs(true);
-        renderGaragePage();
+        renderGaragePage(saveState.pageGarageCount);
       });
     }
-
+    const generate100Car: HTMLButtonElement | null = document.querySelector('.garage__main-settings-generate-btn');
+    if (generate100Car) generate100Car.onclick = () => getRandom100Cars();
+    const nextPage: HTMLElement | null = document.querySelector('.garage__page-settings-next-btn');
+    if (nextPage) {
+      nextPage.addEventListener('click', () => {
+        getNextPage();
+        renderGaragePage(saveState.pageGarageCount);
+      });
+    }
+    const prevPage: HTMLElement | null = document.querySelector('.garage__page-settings-prev-btn');
+    if (prevPage) {
+      prevPage.addEventListener('click', () => {
+        getPrevPage();
+        renderGaragePage(saveState.pageGarageCount);
+      });
+    }
   }
 }
 
 window.onload = () => {
-  renderGaragePage();
+  renderGaragePage(saveState.pageGarageCount);
 }
 
 const navGarage: HTMLElement | null = document.querySelector('.nav__garage');
 
 if (navGarage) {
   navGarage.addEventListener('click', () => {
-    renderGaragePage();
+    renderGaragePage(saveState.pageGarageCount);
   });
 }
+
