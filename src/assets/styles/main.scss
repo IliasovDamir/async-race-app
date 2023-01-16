@@ -92,13 +92,13 @@ h1 span {
 
 .h3 {
   color: $text;
-  margin: 20px auto;
+  margin: 10px 0 20px 0;
 }
 
 .h4 {
-  color: $text;
-  margin: 20px auto;
+  color: $text;  
   font-size: 20px;
+  margin: 10px 0 10px 47px;
 }
 
 .garage {
@@ -107,8 +107,14 @@ h1 span {
   &__controls {
     display: flex;
     flex-direction: column;
-    margin: 10px 0;
+    margin: 5px 0;
     gap: 10px;
+  }
+
+  &__title-wrap {
+    display: flex;
+    gap: 20px;
+    align-items: center;
   }
 
   &__create-wrap,
@@ -230,6 +236,12 @@ h1 span {
 
   &__main-settings-race-btn {
     width: 80px;
+    @include btn;
+  }
+
+  &__page-settings-prev-btn,
+  &__page-settings-next-btn {
+    width: 50px;
     @include btn;
   }
 

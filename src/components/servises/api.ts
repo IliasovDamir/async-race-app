@@ -1,5 +1,6 @@
 import { IGetCars, IGetCarsHead, ICreateCar } from '../models/models';
-import { saveState } from '../servises/state';
+// import { saveState } from '../servises/state';
+import { renderGaragePage } from '../pages/garage';
 
 const GARAGE: string = 'http://127.0.0.1:3000/garage/';
 const ENGINE: string = 'http://127.0.0.1:3000/engine/';
@@ -19,7 +20,7 @@ export async function getCars(pageCount: number, limitCars: number = LIMIT): Pro
   };
 }
 
-//post car to server
+// post car to server
 export async function createCar(body: ICreateCar): Promise<IGetCars> {
   return (
     await fetch(GARAGE, {
@@ -32,6 +33,32 @@ export async function createCar(body: ICreateCar): Promise<IGetCars> {
   ).json();
 }
 
+// create car after POST
+// eslint-disable-next-line import/prefer-default-export
+export async function setCar(): Promise<void> {
+  const createCarTextInput = document.querySelector('.garage__create-text-input');
+  const createCarColorInput = document.querySelector('.garage__create-color-input');
+  let carName: string = (createCarTextInput as HTMLInputElement).value;
+  if (carName === '') {
+    carName = 'New car';
+  }
+  const newCar: ICreateCar = {
+    name: carName,
+    color: (createCarColorInput as HTMLInputElement).value,
+  };
+  await createCar(newCar);
+  await renderGaragePage();
+}
+
+// delete car
+// export async function deleteCar(): Promise<void> {
+ 
+// }
+
+// const deleteCarBnts: NodeListOf<Element> = document.querySelectorAll('.garage__remove-btn');
+// deleteCarBnts.forEach((el) => {
+//   el.addEventListener('click', deleteCar());
+// });
 
 //
 
