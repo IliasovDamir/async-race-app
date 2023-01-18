@@ -283,6 +283,13 @@ h1 span {
     @include btn;
   }
 
+  &__start-btn,
+  &__stop-btn {
+    &:disabled {  
+      opacity: 0.3;
+    }
+  }
+
   &__car-name {
     margin: 0;
     font-size: 20px;
@@ -312,6 +319,7 @@ h1 span {
     width: 60px;
     height: 20px;
   }
+  
 }
 
 //----------------winners----------------------//

@@ -14,6 +14,11 @@ export interface ICreateCar {
   color: string;
 }
 
+export interface ICarSpeed {
+  velocity: number;
+  distance: number;
+}
+
 export interface IWinner {
   wins: number;
   time: number;
@@ -24,5 +29,4 @@ export interface ICreateWinner {
   wins: number;
   time: number;
 }
-
 

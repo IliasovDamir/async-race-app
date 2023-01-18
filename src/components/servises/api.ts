@@ -1,4 +1,4 @@
-import { IGetCars, IGetCarsHead, ICreateCar } from '../models/models';
+import { IGetCars, IGetCarsHead, ICreateCar, ICarSpeed } from '../models/models';
 // import { saveState } from '../servises/state';
 import { renderGaragePage } from '../pages/garage';
 import { saveState } from './state';
@@ -104,3 +104,27 @@ export async function updateNameColorCar(el: HTMLElement) {
   if (updateCarTextInput && name) updateCarTextInput.value = name;
 }
 
+// http://127.0.0.1:3000/engine/?id=43&status=started
+
+export async function startEngine(id: number): Promise<ICarSpeed> {
+  return (
+    await fetch(`${ENGINE}?id=${id}&status=started`, {
+      method: 'PATCH',
+    })
+  ).json();
+}
+
+export async function stopEngine(id: number): Promise<ICarSpeed> {
+  return (
+    await fetch(`${ENGINE}?id=${id}&status=stopped`, {
+      method: 'PATCH',
+    })
+  ).json();
+}
+
+export async function driveEngine(id: number): Promise<number> {
+  const responce = await fetch(`${ENGINE}?id=${id}&status=drive`, {
+    method: 'PATCH',
+  }).catch();
+  return responce.status;
+}

@@ -14,11 +14,20 @@ $text: #ffffff;
   }
 }
 
-.disabled {
-  color: #8a8a86;
-}
-
-
 .display-none {
   display: none;
+}
+
+.drive {
+  animation: drive ease-in forwards;
+  animation-duration: 5s;
+}
+
+@keyframes drive {
+  from {
+    transform: translateX(0px);
+  }
+  to {
+    transform: translateX(calc(100vw - 220px));
+  }
 }
