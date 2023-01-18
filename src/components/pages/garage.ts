@@ -177,6 +177,20 @@ export async function renderGaragePage(page: number): Promise<void> {
       stopDrive(el);
     });
   });
+
+  const raceBtn: HTMLButtonElement | null = document.querySelector('.garage__main-settings-race-btn');
+  function startRace() {
+    startBtns.forEach((el) => startDrive(el));
+    if (raceBtn) raceBtn.disabled = true;
+  }
+  if (raceBtn) raceBtn.addEventListener('click', startRace);
+
+  const resetBtn: HTMLButtonElement | null = document.querySelector('.garage__main-settings-reset-btn');
+  function resetRace() {
+    stopArrBtns.forEach((el) => stopDrive(el));
+    if (raceBtn) raceBtn.disabled = false;
+  }
+  if (resetBtn) resetBtn.addEventListener('click', resetRace);
 }
 
 async function startDrive(el: HTMLButtonElement) {
@@ -192,16 +206,12 @@ async function startDrive(el: HTMLButtonElement) {
     svgCar.classList.add('drive');
     (svgCar as HTMLElement).style.animationDuration = `${time / 1000}s`;
     console.log((svgCar as HTMLElement).style.animationDuration);
-    
   }
-
   const driveCarResp = await driveEngine(id);
   console.log('responce from DriveEngine:::', driveCarResp);
   if (driveCarResp !== 200) {
     (svgCar as HTMLElement).style.animationPlayState = 'paused';
-  }  
- 
-
+  }
 }
 
 function stopDrive(el: HTMLButtonElement) {
@@ -209,6 +219,8 @@ function stopDrive(el: HTMLButtonElement) {
   if (el.previousElementSibling) (el.previousElementSibling as HTMLButtonElement).disabled = false;
   if (el.nextElementSibling) (el.nextElementSibling as HTMLElement).classList.remove('drive');
 }
+
+
 
 window.onload = () => {
   renderGaragePage(saveState.pageGarageCount);

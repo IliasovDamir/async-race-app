@@ -237,6 +237,9 @@ h1 span {
   &__main-settings-race-btn {
     width: 80px;
     @include btn;
+    &:disabled {  
+      opacity: 0.3;
+    }
   }
 
   &__page-settings-prev-btn,
@@ -248,6 +251,9 @@ h1 span {
   &__main-settings-reset-btn {
     width: 100px;    
     @include btn;
+    &:disabled {  
+      opacity: 0.3;
+    }
   }
 
   &__main-settings-generate-btn {
