@@ -1,4 +1,4 @@
-import { IGetCars, IGetCarsHead, ICreateCar, ICarSpeed, SortType, OrderType, IGetWinnersHead, IWinner } from '../models/models';
+import { IGetCars, IGetCarsHead, ICreateCar, ICarSpeed, SortType, OrderType, IGetWinnersHead, IWinner, IUpdateWinner } from '../models/models';
 // import { saveState } from '../servises/state';
 import { getRacingPage } from '../pages/garage';
 import { saveState } from './state';
@@ -173,7 +173,7 @@ export async function createWinner(body: IWinner): Promise<IWinner> {
 
 export async function updateWinner(id: number, body: IUpdateWinner): Promise<IWinner> {
   return (
-    await fetch(`${GARAGE}${id}`, {
+    await fetch(`${WINNERS}${id}`, {
       method: 'PUT',
       body: JSON.stringify(body),
       headers: {

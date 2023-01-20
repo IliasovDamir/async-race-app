@@ -128,7 +128,7 @@ function startRacingTimeCount(time: number) {
         if (carXCoordinate > distance) {
           clearInterval(racingCounter);
           showWinner(id, time);
-          saveState.winnersCount += 1;
+          saveState.winnersMessageCount += 1;
         }
       });
     }
@@ -144,7 +144,7 @@ async function stopDrive(el: HTMLButtonElement) {
 }
 
 async function showWinner(id: number, time: number) {
-  if (saveState.winnersCount === 1) {
+  if (saveState.winnersMessageCount === 1) {
     const main: HTMLElement | null = document.querySelector('main');
     const winnerName: string = (await getOneCar(id)).name;
     const winMsg = document.createElement('h5');
@@ -204,7 +204,7 @@ function addListenersToGarageControlSection() {
   if (raceBtn) raceBtn.addEventListener('click', startRace);
 
   async function resetRace(): Promise<void> {
-    saveState.winnersCount = 1;
+    saveState.winnersMessageCount = 1;
     const stopArrBtns: HTMLButtonElement[] = Array.from(document.querySelectorAll('.garage__stop-btn'));
     if (raceBtn) raceBtn.disabled = false;
     const stopRaceArrPomises = stopArrBtns.map((el) => stopDrive(el));

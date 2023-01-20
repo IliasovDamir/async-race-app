@@ -4,6 +4,6 @@ export const saveState = {
   allPageGarage: 1,
   pageWinnerCount: 1,
   allPageWinner: 1,
-  winnersCount: 1,
+  winnersMessageCount: 1,
   sort: 1,
 };
