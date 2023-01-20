@@ -20,6 +20,7 @@ import {
 import { createOptionsForInput } from '../servises/cars-brands';
 // eslint-disable-next-line import/no-cycle
 import { getRandom100Cars } from '../servises/generate-cars';
+import { setWinnerList } from './wins-board';
 
 const START_POSITION = 122;
 const FLAG_POSITION = 100;
@@ -127,7 +128,7 @@ function startRacingTimeCount(time: number) {
         const distance = window.innerWidth - START_POSITION - FLAG_POSITION;
         if (carXCoordinate > distance) {
           clearInterval(racingCounter);
-          showWinner(id, time);
+          showWinner(id, time);          
           saveState.winnersMessageCount += 1;
         }
       });
@@ -151,6 +152,7 @@ async function showWinner(id: number, time: number) {
     winMsg.classList.add('winner');
     winMsg.innerHTML += `Winner: <span>${winnerName}<br>Time: ${time} s</span>`;
     if (main) main.appendChild(winMsg);
+    setWinnerList(id, time);
   }
 }
 

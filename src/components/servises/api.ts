@@ -76,6 +76,7 @@ export async function removeCar(el: HTMLElement) {
   const id = Number(el.getAttribute('car-id'));
   await deleteCar(id);
   await getRacingPage(saveState.pageGarageCount);
+  await deleteWinner(id);
 }
 
 // update car

@@ -15,7 +15,7 @@ function getHeader() {
 
   const navWinners: HTMLElement | null = document.querySelector('.nav__winners');
   if (navWinners) {
-    navWinners.addEventListener('click', () => renderWinnersPage());
+    navWinners.addEventListener('click', () => renderWinnersPage(saveState.pageWinnerCount));
   }
 
   const navGarage: HTMLElement | null = document.querySelector('.nav__garage');
