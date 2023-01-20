@@ -38,6 +38,10 @@ function renderWinsBoard(winnersCount: number): string {
   return `<main class="winners">
     <h3 class="winners__title">Winners <span>(${winnersCount})</span></h3>
     <p class="winners__page">Page #<span>${saveState.pageWinnerCount}/${saveState.allPageWinner}</span></p>
+    <div class="winners__btn-wrap">
+      <button class="winners__page-settings-prev-btn">prev</button>
+      <button class="winners__page-settings-next-btn">next</button>
+    </div>
       <div class="winners__state-title">
         <div class="winners__number first-line">N</div>
         <div class="winners__car first-line">Car</div>
@@ -77,19 +81,6 @@ function addSortToWinnersPage() {
   if (sortTime) sortTime.addEventListener('click', () => changeSort('time'));
 }
 
-export async function renderWinnersPage(page: number): Promise<void> {
-  const main: HTMLElement | null = document.querySelector('main');
-  if (main) {
-    main.innerHTML = '';
-    main.classList.add('winners');
-    const { arrWinners, winnersCount } = await getWinners(page);
-    saveState.allPageWinner = Math.ceil(winnersCount / LIMIT_WINNERS);
-    main.innerHTML = renderWinsBoard(winnersCount);
-    addSortToWinnersPage();
-    renderWinsList(arrWinners);
-  }
-}
-
 export async function setWinnerList(id: number, time: number) {
   const winnerState = await getWinner(id);
   if (!winnerState.id) {
@@ -102,5 +93,40 @@ export async function setWinnerList(id: number, time: number) {
     const newTime = winnerState.time < time ? winnerState.time : time;
     const newWins = winnerState.wins + 1;
     updateWinner(id, { wins: newWins, time: newTime });
+  }
+}
+
+function addPaginationWinnersPage() {
+  const nextPage: HTMLElement | null = document.querySelector('.winners__page-settings-next-btn');
+  if (nextPage) {
+    nextPage.addEventListener('click', () => {
+      if (saveState.pageWinnerCount < saveState.allPageWinner) {
+        saveState.pageWinnerCount += 1;
+      };
+      renderWinnersPage(saveState.pageWinnerCount);
+    });
+  }
+  const prevPage: HTMLElement | null = document.querySelector('.winners__page-settings-prev-btn');
+  if (prevPage) {
+    prevPage.addEventListener('click', () => {
+      if (saveState.pageWinnerCount > 1) {
+        saveState.pageWinnerCount -= 1;
+      };
+      renderWinnersPage(saveState.pageWinnerCount);
+    });
+  }
+}
+
+export async function renderWinnersPage(page: number): Promise<void> {
+  const main: HTMLElement | null = document.querySelector('main');
+  if (main) {
+    main.innerHTML = '';
+    main.classList.add('winners');
+    const { arrWinners, winnersCount } = await getWinners(page);
+    saveState.allPageWinner = Math.ceil(winnersCount / LIMIT_WINNERS);
+    main.innerHTML = renderWinsBoard(winnersCount);
+    addSortToWinnersPage();
+    renderWinsList(arrWinners);
+    addPaginationWinnersPage();
   }
 }

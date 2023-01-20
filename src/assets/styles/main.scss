@@ -354,7 +354,19 @@ h1 span {
   &__title,
   &__page {
     color: $text;
-    margin: 20px auto;    
+    margin: 10px auto;   
+  }
+
+  &__btn-wrap {
+    display: flex;
+    margin: 10px auto;
+    gap: 20px;
+  }
+
+  &__page-settings-prev-btn,
+  &__page-settings-next-btn {
+    width: 50px;
+    @include btn;
   }
 
   &__state-wrap {
