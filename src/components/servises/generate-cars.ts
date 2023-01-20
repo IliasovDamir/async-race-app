@@ -1,5 +1,5 @@
 import { ICreateCar } from '../models/models';
-import { renderGaragePage } from '../pages/garage';
+import { getRacingPage } from '../pages/garage';
 import { createCar } from './api';
 import { carFirstName, carSubName } from './cars-brands';
 import { saveState } from './state';
@@ -28,5 +28,5 @@ export async function getRandom100Cars(): Promise<void> {
     };
     createCar(newCar);
   }
-  await renderGaragePage(saveState.pageGarageCount);
+  await getRacingPage(saveState.pageGarageCount);
 }

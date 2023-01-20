@@ -1,6 +1,6 @@
 import { IGetCars, IGetCarsHead, ICreateCar, ICarSpeed } from '../models/models';
 // import { saveState } from '../servises/state';
-import { renderGaragePage } from '../pages/garage';
+import { getRacingPage, renderGaragePage } from '../pages/garage';
 import { saveState } from './state';
 
 const GARAGE: string = 'http://127.0.0.1:3000/garage/';
@@ -50,9 +50,10 @@ export async function createCar(body: ICreateCar): Promise<IGetCars> {
 // create car after POST
 // eslint-disable-next-line import/prefer-default-export
 export async function setCar(): Promise<void> {
-  const createCarTextInput = document.querySelector('.garage__create-text-input');
-  const createCarColorInput = document.querySelector('.garage__create-color-input');
-  let carName: string = (createCarTextInput as HTMLInputElement).value;
+  const createCarTextInput: HTMLInputElement | null = document.querySelector('.garage__create-text-input');
+  const createCarColorInput: HTMLInputElement | null = document.querySelector('.garage__create-color-input');
+  let carName: string = '';
+  if (createCarTextInput) carName = createCarTextInput.value;
   if (carName === '') {
     carName = 'New car';
   }
@@ -61,7 +62,8 @@ export async function setCar(): Promise<void> {
     color: (createCarColorInput as HTMLInputElement).value,
   };
   await createCar(newCar);
-  await renderGaragePage(saveState.pageGarageCount);
+  await getRacingPage(saveState.pageGarageCount);
+  if (createCarTextInput) createCarTextInput.value = '';
 }
 
 // delete car
@@ -72,7 +74,7 @@ export async function deleteCar(id: number) {
 export async function removeCar(el: HTMLElement) {
   const id = Number(el.getAttribute('car-id'));
   await deleteCar(id);
-  await renderGaragePage(saveState.pageGarageCount);
+  await getRacingPage(saveState.pageGarageCount);
 }
 
 // update car

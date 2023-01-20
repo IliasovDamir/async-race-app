@@ -1,5 +1,5 @@
 /* eslint-disable no-param-reassign */
-import { IGetCars, ICreateCar, ICarSpeed, IRaceCar } from '../models/models';
+import { IGetCars, ICarSpeed, IRaceCar } from '../models/models';
 import { saveState } from '../servises/state';
 // eslint-disable-next-line import/no-cycle
 import {
@@ -15,42 +15,22 @@ import {
   startEngine,
   driveEngine,
   getOneCar,
+  stopEngine,
 } from '../servises/api';
 import { createOptionsForInput } from '../servises/cars-brands';
 // eslint-disable-next-line import/no-cycle
 import { getRandom100Cars } from '../servises/generate-cars';
-import { renderWinnersPage, winsList } from './wins-board';
 
-export const body: HTMLElement | null = document.querySelector('body');
+const FLAG_COORDINATES = 100;
 
-function renderHeader(): string {
-  return `<header class="header">
-    <h1 class="h1"><span>A</span>sync Rase</h1>
-    <div class="nav">
-      <button class="nav__garage">Garage</button>
-      <button class="nav__winners">Winners</button>
-    </div>
-  </header>`;
-}
-
-export const main = document.createElement('main');
-
-if (body) {
-  body.innerHTML = renderHeader();
-  body.appendChild(main);
-  const navWinners: HTMLElement | null = document.querySelector('.nav__winners');
-
-  if (navWinners) {
-    navWinners.addEventListener('click', () => renderWinnersPage());
-  }
-}
+const winsList: IRaceCar[] = [];
 
 function renderGarageControls(): string {
   return `<div class="garage__controls">
     <div class="garage__create-wrap">
       <input type="text" class="garage__create-text-input" placeholder="Enter car name" list="cars">
       <datalist id="cars">
-      ${createOptionsForInput()}      
+      ${createOptionsForInput()}
       </datalist>
       <input type="color" class="garage__create-color-input" value="#a6ca16">
       <button class="garage__create-btn">Create</button>
@@ -65,7 +45,8 @@ function renderGarageControls(): string {
       <button class="garage__main-settings-reset-btn">Reset</button>
       <button class="garage__main-settings-generate-btn">Generate cars</button>
     </div>
-  </div>`;
+  </div>
+  <section class="racing-page"></section>`;
 }
 
 function renderTitleGarage(carsCount: number, pageGarageCount: number): string {
@@ -119,99 +100,6 @@ async function getNextPage(): Promise<void> {
   }
 }
 
-// eslint-disable-next-line import/prefer-default-export
-export async function renderGaragePage(page: number): Promise<void> {
-  if (main) {
-    main.classList.add('garage');
-    main.innerHTML = '';
-    main.innerHTML += renderGarageControls();
-    const { arrCars, carsCount } = await getCars(page);
-    main.innerHTML += renderTitleGarage(carsCount, saveState.pageGarageCount);
-    main.append(renderCars(arrCars));
-    const createCarBtn = document.querySelector('.garage__create-btn');
-    if (createCarBtn) createCarBtn.addEventListener('click', () => setCar());
-    const deleteCarBnts: NodeListOf<HTMLElement> = document.querySelectorAll('.garage__remove-btn');
-    deleteCarBnts.forEach((el) => el.addEventListener('click', () => removeCar(el)));
-    const updateCarBnts: NodeListOf<HTMLElement> = document.querySelectorAll('.garage__select-btn');
-    updateCarBnts.forEach((el) => el.addEventListener('click', () => updateNameColorCar(el)));
-    const updateCarTextInput: HTMLInputElement | null = document.querySelector('.garage__update-text-input');
-    if (updateCarTextInput) {
-      updateCarTextInput.onchange = () => {
-        inputsObjValue.name = updateCarTextInput.value;
-      };
-    }
-    const updateCarColorInput: HTMLInputElement | null = document.querySelector('.garage__update-color-input');
-    if (updateCarColorInput) {
-      updateCarColorInput.onchange = () => {
-        inputsObjValue.color = updateCarColorInput.value;
-      };
-    }
-    const updateCarBtn = document.querySelector('.garage__update-btn');
-    if (updateCarBtn) {
-      updateCarBtn.addEventListener('click', () => {
-        updateCar(inputsObjValue.id, { name: inputsObjValue.name, color: inputsObjValue.color });
-        resetInputsObjValue();
-        onlockUpdateInputs(true);
-        renderGaragePage(saveState.pageGarageCount);
-      });
-    }
-    const generate100Car: HTMLButtonElement | null = document.querySelector('.garage__main-settings-generate-btn');
-    if (generate100Car) generate100Car.onclick = () => getRandom100Cars();
-    const nextPage: HTMLElement | null = document.querySelector('.garage__page-settings-next-btn');
-    if (nextPage) {
-      nextPage.addEventListener('click', () => {
-        getNextPage();
-        renderGaragePage(saveState.pageGarageCount);
-      });
-    }
-    const prevPage: HTMLElement | null = document.querySelector('.garage__page-settings-prev-btn');
-    if (prevPage) {
-      prevPage.addEventListener('click', () => {
-        getPrevPage();
-        renderGaragePage(saveState.pageGarageCount);
-      });
-    }
-  }
-  const startBtns: HTMLButtonElement[] = Array.from(document.querySelectorAll('.garage__start-btn'));
-  const stopArrBtns: HTMLButtonElement[] = Array.from(document.querySelectorAll('.garage__stop-btn'));
-
-  // eslint-disable-next-line no-restricted-syntax
-  for (const el of startBtns) {
-    el.addEventListener('click', () => {
-      startDrive(el);
-    });
-  }
-
-  // eslint-disable-next-line no-restricted-syntax
-  for (const el of stopArrBtns) {
-    el.addEventListener('click', () => stopDrive(el));
-  }
-
-  const raceBtn: HTMLButtonElement | null = document.querySelector('.garage__main-settings-race-btn');
-  async function startRace() {
-    if (raceBtn) raceBtn.disabled = true;
-    const raceArrPomises = startBtns.map((el) => startDrive(el));
-    await Promise.all(raceArrPomises);
-    showWinner();
-  }
-  
-  if (raceBtn) raceBtn.addEventListener('click', startRace);
-
-  const resetBtn: HTMLButtonElement | null = document.querySelector('.garage__main-settings-reset-btn');
-  
-  function resetRace(): void {
-    stopArrBtns.forEach((el) => stopDrive(el));
-    if (raceBtn) raceBtn.disabled = false;
-  }
-  if (resetBtn) {
-    resetBtn.addEventListener('click', () => {
-      resetRace();
-      winsList.length = 0;
-      document.querySelector('.winner')?.remove();
-    });
-  }
-}
-
 async function startDrive(el: HTMLButtonElement): Promise<void> {
   const id = Number(el.getAttribute('car-id'));
   el.disabled = true;
@@ -230,32 +118,161 @@ async function startDrive(el: HTMLButtonElement): Promise<void> {
   (svgCar as HTMLElement).style.animationPlayState = 'paused';
 }
 
-function stopDrive(el: HTMLButtonElement) {
+async function stopDrive(el: HTMLButtonElement) {
+  const id = Number(el.getAttribute('car-id'));
   el.disabled = true;
   if (el.previousElementSibling) (el.previousElementSibling as HTMLButtonElement).disabled = false;
   if (el.nextElementSibling) (el.nextElementSibling as HTMLElement).classList.remove('drive');
+  await stopEngine(id);
 }
 
 async function showWinner() {
-  const winsSortList = winsList.sort((a, b) => a.time - b.time);
-  const winnerId: number = winsSortList[0].id;
-  const winnerTime: number = winsSortList[0].time;
-  const winnerName: string = (await getOneCar(winnerId)).name;
-  main.innerHTML += `<h5 class="winner">Winner: <span>${winnerName}<br>Time: ${winnerTime} s</span></h5>`;
+  const main: HTMLElement | null = document.querySelector('main');
+  winsList.sort((a, b) => a.time - b.time);
+  console.log(winsList);
+  if (winsList.length > 0) {
+    const winnerId: number = winsList[0].id;
+    const winnerTime: number = winsList[0].time;
+    const winnerName: string = (await getOneCar(winnerId)).name;
+    const winMsg = document.createElement('h5');
+    winMsg.classList.add('winner');
+    winMsg.innerHTML += `Winner: <span>${winnerName}<br>Time: ${winnerTime} s</span>`;
+    if (main) main.appendChild(winMsg);
+  }
 }
 
-// const showPromise = Promise.showWinner();
-// showPromise.then(() => await startRace());
-
-window.onload = () => {
-  renderGaragePage(saveState.pageGarageCount);
-};
-
-const navGarage: HTMLElement | null = document.querySelector('.nav__garage');
-
-if (navGarage) {
-  navGarage.addEventListener('click', () => {
-    renderGaragePage(saveState.pageGarageCount);
-  });
+function addUpdateListeners() {
+  const updateCarBnts: NodeListOf<HTMLElement> = document.querySelectorAll('.garage__select-btn');
+  updateCarBnts.forEach((el) => el.addEventListener('click', () => updateNameColorCar(el)));
+  const updateCarTextInput: HTMLInputElement | null = document.querySelector('.garage__update-text-input');
+  if (updateCarTextInput) {
+    updateCarTextInput.onchange = () => {
+      inputsObjValue.name = updateCarTextInput.value;
+    };
+  }
+  const updateCarColorInput: HTMLInputElement | null = document.querySelector('.garage__update-color-input');
+  if (updateCarColorInput) {
+    updateCarColorInput.onchange = () => {
+      inputsObjValue.color = updateCarColorInput.value;
+    };
+  }
+  const updateCarBtn = document.querySelector('.garage__update-btn');
+  if (updateCarBtn) {
+    updateCarBtn.addEventListener('click', () => {
+      updateCar(inputsObjValue.id, { name: inputsObjValue.name, color: inputsObjValue.color });
+      resetInputsObjValue();
+      onlockUpdateInputs(true);
+      getRacingPage(saveState.pageGarageCount);
+    });
+  }
 }
 
+function deleteWinnerMsg() {
+  const main = document.querySelector('main');
+  const winnerMsg = document.querySelector('.winner');
+  if (main && winnerMsg) main.removeChild(winnerMsg);
+}
+
+function addListenersToGarageControlSection() {
+  const createCarBtn = document.querySelector('.garage__create-btn');
+  if (createCarBtn) createCarBtn.addEventListener('click', () => setCar());
+
+  addUpdateListeners();
+
+  const raceBtn: HTMLButtonElement | null = document.querySelector('.garage__main-settings-race-btn');
+  async function startRace() {
+    resetRace();
+    const startBtns: HTMLButtonElement[] = Array.from(document.querySelectorAll('.garage__start-btn'));
+    if (raceBtn) raceBtn.disabled = true;
+    const raceArrPomises = startBtns.map((el) => startDrive(el));
+    await Promise.all(raceArrPomises);
+    showWinner();
+  }
+  if (raceBtn) raceBtn.addEventListener('click', startRace);
+
+  async function resetRace(): Promise<void> {
+    const stopArrBtns: HTMLButtonElement[] = Array.from(document.querySelectorAll('.garage__stop-btn'));
+    if (raceBtn) raceBtn.disabled = false;
+    const stopRaceArrPomises = stopArrBtns.map((el) => stopDrive(el));
+    await Promise.all(stopRaceArrPomises);
+  }
+
+  const resetBtn: HTMLButtonElement | null = document.querySelector('.garage__main-settings-reset-btn');
+  if (resetBtn) {
+    resetBtn.addEventListener('click', () => {
+      deleteWinnerMsg();
+      resetRace();
+      winsList.length = 0;
+      getRacingPage(saveState.pageGarageCount);
+    });
+  }
+
+  const generate100Car: HTMLButtonElement | null = document.querySelector('.garage__main-settings-generate-btn');
+  if (generate100Car) generate100Car.onclick = () => getRandom100Cars();
+}
+
+function addListenersForRace() {
+  const startBtns: HTMLButtonElement[] = Array.from(document.querySelectorAll('.garage__start-btn'));
+  const stopArrBtns: HTMLButtonElement[] = Array.from(document.querySelectorAll('.garage__stop-btn'));
+
+  // eslint-disable-next-line no-restricted-syntax
+  for (const el of startBtns) {
+    el.addEventListener('click', () => startDrive(el));
+  }
+
+  // eslint-disable-next-line no-restricted-syntax
+  for (const el of stopArrBtns) {
+    el.addEventListener('click', () => stopDrive(el));
+  }
+
+  const deleteCarBnts: NodeListOf<HTMLElement> = document.querySelectorAll('.garage__remove-btn');
+  deleteCarBnts.forEach((el) => el.addEventListener('click', () => removeCar(el)));
+
+  addUpdateListeners();
+}
+
+function addPaginationForCarsPage() {
+  const nextPage: HTMLElement | null = document.querySelector('.garage__page-settings-next-btn');
+  if (nextPage) {
+    nextPage.addEventListener('click', () => {
+      winsList.length = 0;
+      deleteWinnerMsg();
+      getNextPage();
+      renderGaragePage(saveState.pageGarageCount);
+    });
+  }
+  const prevPage: HTMLElement | null = document.querySelector('.garage__page-settings-prev-btn');
+  if (prevPage) {
+    prevPage.addEventListener('click', () => {
+      deleteWinnerMsg();
+      getPrevPage();
+      renderGaragePage(saveState.pageGarageCount);
+    });
+  }
+}
+
+export async function getRacingPage(page: number) {
+  deleteWinnerMsg();
+  winsList.length = 0;
+  const { arrCars, carsCount } = await getCars(page);
+  const racingPage: HTMLElement | null = document.querySelector('.racing-page');
+  if (racingPage) {
+    racingPage.innerHTML = '';
+    racingPage.innerHTML += renderTitleGarage(carsCount, saveState.pageGarageCount);
+    racingPage.append(renderCars(arrCars));
+  }
+  addPaginationForCarsPage();
+  addListenersForRace();
+}
+
+// eslint-disable-next-line import/prefer-default-export
+export async function renderGaragePage(page: number): Promise<void> {
+  const main: HTMLElement | null = document.querySelector('main');
+  if (main) {
+    main.classList.add('garage');
+    main.innerHTML = '';
+    main.innerHTML += renderGarageControls();
+    addListenersToGarageControlSection();
+    getRacingPage(page);
+  }
+}

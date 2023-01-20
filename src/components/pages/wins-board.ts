@@ -1,8 +1,6 @@
 /* eslint-disable import/prefer-default-export */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IRaceCar } from '../models/models';
-import { main } from './garage';
-
-export const winsList: IRaceCar[] = [];
 
 // function renderWinsList(): string {
 //   return `<div class="winners__state-title">
@@ -30,9 +28,8 @@ function renderWinsBoard(): string {
   </main>`;
 }
 
-
-
 export async function renderWinnersPage(): Promise<void> {
+  const main: HTMLElement | null = document.querySelector('main');
   if (main) {
     main.classList.add('winners');
     main.innerHTML = '';
