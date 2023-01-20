@@ -14,7 +14,7 @@ function getRandomColor(): string {
 }
 
 function getRandName(arr: string[], length: number): string {
-  return arr[Math.floor(Math.random() * (length + 1))];
+  return arr[Math.floor(Math.random() * length)];
 }
 
 // eslint-disable-next-line import/prefer-default-export
@@ -30,8 +30,3 @@ export async function getRandom100Cars(): Promise<void> {
   }
   await renderGaragePage(saveState.pageGarageCount);
 }
-
-
-
-
-

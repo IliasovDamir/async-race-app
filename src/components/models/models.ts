@@ -19,6 +19,10 @@ export interface ICarSpeed {
   distance: number;
 }
 
+export interface IRaceCar {
+  id: number;
+  time: number;
+}
 export interface IWinner {
   wins: number;
   time: number;

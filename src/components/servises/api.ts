@@ -20,6 +20,10 @@ export function resetInputsObjValue() {
   inputsObjValue.id = 0;
 }
 
+export async function getOneCar(id: number): Promise<IGetCars> {
+  return (await fetch(`${GARAGE}${id}`, { method: 'GET' })).json();
+}
+
 export async function getCars(pageCount: number, limitCars: number = LIMIT): Promise<IGetCarsHead> {
   const resp = await fetch(`${GARAGE}?_page=${pageCount}&_limit=${limitCars}`);
   const arrCars: IGetCars[] = await resp.json();
@@ -128,3 +132,10 @@ export async function driveEngine(id: number): Promise<number> {
   }).catch();
   return responce.status;
 }
+
+// export async function getWinners(id: number): Promise<number> {
+//   const responce = await fetch(`${ENGINE}?id=${id}&status=drive`, {
+//     method: 'PATCH',
+//   }).catch();
+//   return responce.status;
+// }

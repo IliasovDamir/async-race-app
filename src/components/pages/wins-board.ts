@@ -1,5 +1,18 @@
 /* eslint-disable import/prefer-default-export */
+import { IRaceCar } from '../models/models';
 import { main } from './garage';
+
+export const winsList: IRaceCar[] = [];
+
+// function renderWinsList(): string {
+//   return `<div class="winners__state-title">
+//   <div class="winners__number">${position}</div>
+//   <div class="winners__car">${carImg}</div>
+//   <div class="winners__name">${CarName}</div>
+//   <div class="winners__wins">${winsCount}</div>
+//   <div class="winners__time">${time}</div>
+// </div>`;
+// }
 
 function renderWinsBoard(): string {
   return `<main class="winners">
@@ -12,10 +25,12 @@ function renderWinsBoard(): string {
         <div class="winners__name">Name</div>
         <div class="winners__wins">Wins</div>
         <div class="winners__time">Best time (s)</div>
-      </div>
+      </div>   
     </div>
   </main>`;
 }
+
+
 
 export async function renderWinnersPage(): Promise<void> {
   if (main) {
@@ -24,10 +39,4 @@ export async function renderWinnersPage(): Promise<void> {
     main.innerHTML = renderWinsBoard();
   }
 }
-const navWinners: HTMLElement | null = document.querySelector('.nav__winners');
 
-if (navWinners) {
-  navWinners.addEventListener('click', () => {
-    renderWinnersPage();
-  });
-}

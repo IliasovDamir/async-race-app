@@ -1,6 +1,7 @@
 /* eslint-disable no-param-reassign */
-import { IGetCars, ICreateCar, ICarSpeed } from '../models/models';
+import { IGetCars, ICreateCar, ICarSpeed, IRaceCar } from '../models/models';
 import { saveState } from '../servises/state';
+// eslint-disable-next-line import/no-cycle
 import {
   getCars,
   setCar,
@@ -13,9 +14,12 @@ import {
   LIMIT,
   startEngine,
   driveEngine,
+  getOneCar,
 } from '../servises/api';
 import { createOptionsForInput } from '../servises/cars-brands';
+// eslint-disable-next-line import/no-cycle
 import { getRandom100Cars } from '../servises/generate-cars';
+import { renderWinnersPage, winsList } from './wins-board';
 
 export const body: HTMLElement | null = document.querySelector('body');
 
@@ -34,6 +38,11 @@ export const main = document.createElement('main');
 if (body) {
   body.innerHTML = renderHeader();
   body.appendChild(main);
+  const navWinners: HTMLElement | null = document.querySelector('.nav__winners');
+
+  if (navWinners) {
+    navWinners.addEventListener('click', () => renderWinnersPage());
+  }
 }
 
 function renderGarageControls(): string {
@@ -100,14 +109,14 @@ async function getPrevPage(): Promise<void> {
   if (saveState.pageGarageCount > 1) {
     saveState.pageGarageCount -= 1;
     await getCars(saveState.pageGarageCount);
-  };
+  }
 }
 
 async function getNextPage(): Promise<void> {
   if (saveState.pageGarageCount < saveState.allPageGarage) {
     saveState.pageGarageCount += 1;
     await getCars(saveState.pageGarageCount);
-  };
+  }
 }
 
 // eslint-disable-next-line import/prefer-default-export
@@ -115,7 +124,7 @@ export async function renderGaragePage(page: number): Promise<void> {
   if (main) {
     main.classList.add('garage');
     main.innerHTML = '';
-    main.innerHTML = renderGarageControls();
+    main.innerHTML += renderGarageControls();
     const { arrCars, carsCount } = await getCars(page);
     main.innerHTML += renderTitleGarage(carsCount, saveState.pageGarageCount);
     main.append(renderCars(arrCars));
@@ -166,52 +175,59 @@ export async function renderGaragePage(page: number): Promise<void> {
   const startBtns: HTMLButtonElement[] = Array.from(document.querySelectorAll('.garage__start-btn'));
   const stopArrBtns: HTMLButtonElement[] = Array.from(document.querySelectorAll('.garage__stop-btn'));
 
-  startBtns.forEach((el) => {
+  // eslint-disable-next-line no-restricted-syntax
+  for (const el of startBtns) {
     el.addEventListener('click', () => {
       startDrive(el);
     });
-  });
+  }
 
-  stopArrBtns.forEach((el) => {
-    el.addEventListener('click', () => {
-      stopDrive(el);
-    });
-  });
+  // eslint-disable-next-line no-restricted-syntax
+  for (const el of stopArrBtns) {
+    el.addEventListener('click', () => stopDrive(el));
+  }
 
   const raceBtn: HTMLButtonElement | null = document.querySelector('.garage__main-settings-race-btn');
-  function startRace() {
-    startBtns.forEach((el) => startDrive(el));
+  async function startRace() {
     if (raceBtn) raceBtn.disabled = true;
+    const raceArrPomises = startBtns.map((el) => startDrive(el));
+    await Promise.all(raceArrPomises);
+    showWinner();
   }
+  
   if (raceBtn) raceBtn.addEventListener('click', startRace);
 
   const resetBtn: HTMLButtonElement | null = document.querySelector('.garage__main-settings-reset-btn');
-  function resetRace() {
+  
+  function resetRace(): void {
     stopArrBtns.forEach((el) => stopDrive(el));
     if (raceBtn) raceBtn.disabled = false;
   }
-  if (resetBtn) resetBtn.addEventListener('click', resetRace);
+  if (resetBtn) {
+    resetBtn.addEventListener('click', () => {
+      resetRace();
+      winsList.length = 0;
+      document.querySelector('.winner')?.remove();
+    });
+  }
 }
 
-async function startDrive(el: HTMLButtonElement) {
+async function startDrive(el: HTMLButtonElement): Promise<void> {
   const id = Number(el.getAttribute('car-id'));
-  // console.log('id from DriveEngine:::', id);
   el.disabled = true;
   const startCarResp: ICarSpeed = await startEngine(id);
-  const time: number = startCarResp.distance / startCarResp.velocity;
+  const time: number = +(startCarResp.distance / 1000 / startCarResp.velocity).toFixed(2);
   const svgCar: Element | null = el.nextElementSibling!.nextElementSibling;
-  // console.log('StartCarResp:::', startCarResp);
   if (el.nextElementSibling) (el.nextElementSibling as HTMLButtonElement).disabled = false;
   if (svgCar) {
     svgCar.classList.add('drive');
-    (svgCar as HTMLElement).style.animationDuration = `${time / 1000}s`;
-    console.log((svgCar as HTMLElement).style.animationDuration);
+    (svgCar as HTMLElement).style.animationDuration = `${time}s`;
   }
   const driveCarResp = await driveEngine(id);
-  console.log('responce from DriveEngine:::', driveCarResp);
-  if (driveCarResp !== 200) {
-    (svgCar as HTMLElement).style.animationPlayState = 'paused';
+  if (driveCarResp === 200) {
+    winsList.push({ id, time });
   }
+  (svgCar as HTMLElement).style.animationPlayState = 'paused';
 }
 
 function stopDrive(el: HTMLButtonElement) {
@@ -220,7 +236,16 @@ function stopDrive(el: HTMLButtonElement) {
   if (el.nextElementSibling) (el.nextElementSibling as HTMLElement).classList.remove('drive');
 }
 
+async function showWinner() {
+  const winsSortList = winsList.sort((a, b) => a.time - b.time);
+  const winnerId: number = winsSortList[0].id;
+  const winnerTime: number = winsSortList[0].time;
+  const winnerName: string = (await getOneCar(winnerId)).name;
+  main.innerHTML += `<h5 class="winner">Winner: <span>${winnerName}<br>Time: ${winnerTime} s</span></h5>`;
+}
 
+// const showPromise = Promise.showWinner();
+// showPromise.then(() => await startRace());
 
 window.onload = () => {
   renderGaragePage(saveState.pageGarageCount);
