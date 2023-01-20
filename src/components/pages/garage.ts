@@ -11,7 +11,7 @@ import {
   inputsObjValue,
   resetInputsObjValue,
   onlockUpdateInputs,
-  LIMIT,
+  LIMIT_GARAGE,
   startEngine,
   driveEngine,
   getOneCar,
@@ -51,7 +51,7 @@ function renderGarageControls(): string {
 function renderTitleGarage(carsCount: number, pageGarageCount: number): string {
   return `<div class="garage__title-wrap">
     <h3 class="h3">Garage <span>(${carsCount})</span></h3>
-    <h4 class="h4">Page #<span>${pageGarageCount}/${pagination(carsCount, LIMIT)}</span></h4>    
+    <h4 class="h4">Page #<span>${pageGarageCount}/${pagination(carsCount, LIMIT_GARAGE)}</span></h4>    
     <button class="garage__page-settings-prev-btn">prev</button>
     <button class="garage__page-settings-next-btn">next</button>
   </div>`;
@@ -80,7 +80,7 @@ function renderCars(arrCars: IGetCars[]): HTMLElement {
 }
 
 // pagination
-export function pagination(carsCount: number, limitCars: number = LIMIT) {
+export function pagination(carsCount: number, limitCars: number = LIMIT_GARAGE) {
   saveState.allPageGarage = Math.ceil(carsCount / limitCars);
   return saveState.allPageGarage;
 }

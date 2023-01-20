@@ -23,14 +23,22 @@ export interface IRaceCar {
   id: number;
   time: number;
 }
-export interface IWinner {
+export interface IUpdateWinner {
   wins: number;
   time: number;
 }
 
-export interface ICreateWinner {
+export interface IWinner {
   id: number;
   wins: number;
   time: number;
 }
 
+export interface IGetWinnersHead {
+  arrWinners: IWinner[];
+  winnersCount: number;
+}
+
+export type SortType = 'id' | 'time' | 'wins';
+
+export type OrderType = 'ASC' | 'DESC';
