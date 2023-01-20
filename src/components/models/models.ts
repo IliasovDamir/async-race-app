@@ -1,3 +1,12 @@
+export interface IStateApp {
+  pageGarageCount: number;
+  allPageGarage: number;
+  pageWinnerCount: number;
+  allPageWinner: number;
+  winnersMessageCount: number;
+  sort: OrderType;
+}
+
 export interface IGetCars {
   name: string;
   color: string;

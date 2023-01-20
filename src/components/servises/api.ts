@@ -149,7 +149,7 @@ export async function getWinners(
   pageCount: number,
   limitWinners: number = LIMIT_WINNERS,
   sort: SortType = 'time',
-  order: OrderType = 'ASC'
+  order: OrderType = 'ASC',
 ): Promise<IGetWinnersHead> {
   const resp = await fetch(`${WINNERS}?_page=${pageCount}&_limit=${limitWinners}&_sort=${sort}&_order=${order}`);
   const arrWinners: IWinner[] = await resp.json();

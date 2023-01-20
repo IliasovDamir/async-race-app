@@ -1,6 +1,6 @@
 /* eslint-disable import/prefer-default-export */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { IRaceCar, IWinner } from '../models/models';
+import { IRaceCar, IWinner, SortType } from '../models/models';
 import { createWinner, getOneCar, getWinner, getWinners, LIMIT_WINNERS, updateWinner } from '../servises/api';
 import { saveState } from '../servises/state';
 
@@ -9,10 +9,15 @@ function getImg(color: string): string {
 `;
 }
 
-function renderWinsList(arrWinners: IWinner[]): HTMLElement {
+function renderWinsList(arrWinners: IWinner[]): void {
+  const main: HTMLElement | null = document.querySelector('main');
+  const prevWinnersListWrapper: HTMLElement | null = document.querySelector('.winners-wrapper');
+  if (main && prevWinnersListWrapper) main.removeChild(prevWinnersListWrapper);
+
   const winnersListWrapper = document.createElement('div');
   winnersListWrapper.classList.add('winners__state-title');
   winnersListWrapper.classList.add('winners-wrapper');
+  
   arrWinners.forEach(async (el, index) => {
     const responce = await getOneCar(el.id);
     const winnersList = document.createElement('div');
@@ -25,7 +30,8 @@ function renderWinsList(arrWinners: IWinner[]): HTMLElement {
     <div class="winners__time">${el.time}</div>`;
     winnersListWrapper.appendChild(winnersList)
   });
-  return winnersListWrapper;
+
+  if (main) main.appendChild(winnersListWrapper);
 }
 
 function renderWinsBoard(winnersCount: number): string {
@@ -35,15 +41,40 @@ function renderWinsBoard(winnersCount: number): string {
       <div class="winners__state-title">
         <div class="winners__number first-line">N</div>
         <div class="winners__car first-line">Car</div>
-        <div class="winners__name first-line">Name</div>
-        <div class="winners__wins first-line">Wins</div>
-        <div class="winners__time first-line">Best time (s)</div>
+        <div class="winners__name first-line car-name">Name</div>
+        <div class="winners__wins first-line car-wins">Wins</div>
+        <div class="winners__time first-line car-time">Best time (s)</div>
       </div>
   </main>`;
 }
 
-function addListenersToWinnersPage() {
-  
+async function toggleSort(): Promise<void> {
+  if (saveState.sort === 'ASC') {
+    saveState.sort = 'DESC';
+  } else {
+    saveState.sort = 'ASC';
+  }
+}
+
+async function changeSort(param: SortType): Promise<void> {
+  toggleSort();
+  const { arrWinners, winnersCount } = await getWinners(
+    saveState.pageWinnerCount,
+    LIMIT_WINNERS,
+    param,
+    saveState.sort
+  );
+  renderWinsList(arrWinners);
+}
+
+function addSortToWinnersPage() { 
+  const sortName = document.querySelector('.car-name');
+  const sortWins = document.querySelector('.car-wins');
+  const sortTime = document.querySelector('.car-time');
+
+  if (sortName) sortName.addEventListener('click', () => changeSort('id'));
+  if (sortWins) sortWins.addEventListener('click', () => changeSort('wins'));
+  if (sortTime) sortTime.addEventListener('click', () => changeSort('time'));
 }
 
 export async function renderWinnersPage(page: number): Promise<void> {
@@ -54,8 +85,8 @@ export async function renderWinnersPage(page: number): Promise<void> {
     const { arrWinners, winnersCount } = await getWinners(page);
     saveState.allPageWinner = Math.ceil(winnersCount / LIMIT_WINNERS);
     main.innerHTML = renderWinsBoard(winnersCount);
-    addListenersToWinnersPage();
-    main.appendChild(renderWinsList(arrWinners));
+    addSortToWinnersPage();
+    renderWinsList(arrWinners);
   }
 }
 
