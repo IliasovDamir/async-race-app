@@ -1,0 +1,53 @@
+{
+  "name": "async-race-app",
+  "version": "1.0.0",
+  "description": "start",
+  "main": "index.js",
+  "scripts": {
+    "build": "cross-env NODE_ENV=production webpack --mode production",
+    "start": "cross-env NODE_ENV=development webpack serve",
+    "lint": "eslint . --ext .ts",
+    "dev": "cross-env NODE_ENV=development webpack --mode development",
+    "deploy": "npm run build && npx gh-pages -d dist -e async-race"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/IliasovDamir/async-race-app.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/IliasovDamir/async-race-app/issues"
+  },
+  "homepage": "https://github.com/IliasovDamir/async-race-app#readme",
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^5.48.1",
+    "@typescript-eslint/parser": "^5.48.1",
+    "copy-webpack-plugin": "^11.0.0",
+    "css-loader": "^6.7.3",
+    "css-minimizer-webpack-plugin": "^4.2.2",
+    "eslint": "^8.31.0",
+    "eslint-config-prettier": "^8.6.0",
+    "file-loader": "^6.2.0",
+    "gh-pages": "^4.0.0",
+    "mini-css-extract-plugin": "^2.7.2",
+    "prettier": "2.8.2",
+    "sass": "^1.57.1",
+    "sass-loader": "^13.2.0",
+    "ts-loader": "^9.4.2",
+    "typescript": "^4.9.4",
+    "webpack": "^5.75.0",
+    "webpack-cli": "^5.0.1",
+    "webpack-dev-server": "^4.11.1"
+  },
+  "dependencies": {
+    "clean-webpack-plugin": "^4.0.0",
+    "cross-env": "^7.0.3",
+    "eslint-config-airbnb-typescript": "^17.0.0",
+    "eslint-plugin-import": "^2.27.4",
+    "eslint-plugin-prettier": "^4.2.1",
+    "html-webpack-plugin": "^5.5.0",
+    "normalize.css": "^8.0.1"
+  }
+}
