@@ -1,0 +1,38 @@
+$main-font: Roboto, sans-serif;
+$text: #ffffff;
+
+@mixin btn {
+  cursor: pointer;
+  background: #35466f;
+  color: rgb(255, 255, 255);
+  border: none;
+  outline: none;
+  border-radius: 3px;
+
+  &:hover {
+    color: #a6ca16;
+  }
+}
+
+.display-none {
+  display: none;
+}
+
+.drive {
+  animation: drive ease-in forwards;
+  animation-duration: 5s;
+}
+
+@keyframes drive {
+  from {
+    transform: translateX(0px);
+  }
+  to {
+    transform: translateX(calc(100vw - 220px));
+  }
+}
+
+.first-line {
+  background-color: rgb(71, 111, 23);
+  cursor: pointer;
+}
