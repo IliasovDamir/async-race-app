@@ -1,6 +1,5 @@
-/* eslint-disable import/prefer-default-export */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { IRaceCar, IWinner, SortType } from '../models/models';
+import { IWinner, SortType } from '../models/models';
+// eslint-disable-next-line import/no-cycle
 import { createWinner, getOneCar, getWinner, getWinners, LIMIT_WINNERS, updateWinner } from '../servises/api';
 import { saveState } from '../servises/state';
 
@@ -17,7 +16,7 @@ function renderWinsList(arrWinners: IWinner[]): void {
   const winnersListWrapper = document.createElement('div');
   winnersListWrapper.classList.add('winners__state-title');
   winnersListWrapper.classList.add('winners-wrapper');
-  
+
   arrWinners.forEach(async (el, index) => {
     const responce = await getOneCar(el.id);
     const winnersList = document.createElement('div');
@@ -28,7 +27,7 @@ function renderWinsList(arrWinners: IWinner[]): void {
     <div class="winners__name">${responce.name}</div>
     <div class="winners__wins">${el.wins}</div>
     <div class="winners__time">${el.time}</div>`;
-    winnersListWrapper.appendChild(winnersList)
+    winnersListWrapper.appendChild(winnersList);
   });
 
   if (main) main.appendChild(winnersListWrapper);
@@ -71,7 +70,7 @@ async function changeSort(param: SortType): Promise<void> {
   renderWinsList(arrWinners);
 }
 
-function addSortToWinnersPage() { 
+function addSortToWinnersPage(): void {
   const sortName = document.querySelector('.car-name');
   const sortWins = document.querySelector('.car-wins');
   const sortTime = document.querySelector('.car-time');
@@ -81,7 +80,7 @@ function addSortToWinnersPage() {
   if (sortTime) sortTime.addEventListener('click', () => changeSort('time'));
 }
 
-export async function setWinnerList(id: number, time: number) {
+export async function setWinnerList(id: number, time: number): Promise<void> {
   const winnerState = await getWinner(id);
   if (!winnerState.id) {
     createWinner({
@@ -96,7 +95,7 @@ export async function setWinnerList(id: number, time: number) {
   }
 }
 
-function addPaginationWinnersPage() {
+function addPaginationWinnersPage(): void {
   const nextPage: HTMLElement | null = document.querySelector('.winners__page-settings-next-btn');
   if (nextPage) {
     nextPage.addEventListener('click', () => {

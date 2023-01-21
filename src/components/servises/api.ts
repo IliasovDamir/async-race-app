@@ -1,5 +1,4 @@
 import { IGetCars, IGetCarsHead, ICreateCar, ICarSpeed, SortType, OrderType, IGetWinnersHead, IWinner, IUpdateWinner } from '../models/models';
-// import { saveState } from '../servises/state';
 import { getRacingPage } from '../pages/garage';
 import { saveState } from './state';
 
@@ -15,7 +14,7 @@ export const inputsObjValue: IGetCars = {
   id: 0,
 };
 
-export function resetInputsObjValue() {
+export function resetInputsObjValue(): void {
   inputsObjValue.name = 'New car';
   inputsObjValue.color = '#d039b7';
   inputsObjValue.id = 0;
@@ -28,7 +27,7 @@ export async function getOneCar(id: number): Promise<IGetCars> {
 export async function getCars(pageCount: number, limitCars: number = LIMIT_GARAGE): Promise<IGetCarsHead> {
   const resp = await fetch(`${GARAGE}?_page=${pageCount}&_limit=${limitCars}`);
   const arrCars: IGetCars[] = await resp.json();
-  const carsCount: number = await Number(resp.headers.get('X-Total-Count'));
+  const carsCount: number = Number(resp.headers.get('X-Total-Count'));
   return {
     arrCars,
     carsCount,
@@ -49,7 +48,6 @@ export async function createCar(body: ICreateCar): Promise<IGetCars> {
 }
 
 // create car after POST
-// eslint-disable-next-line import/prefer-default-export
 export async function setCar(): Promise<void> {
   const createCarTextInput: HTMLInputElement | null = document.querySelector('.garage__create-text-input');
   const createCarColorInput: HTMLInputElement | null = document.querySelector('.garage__create-color-input');
@@ -72,7 +70,7 @@ export async function deleteCar(id: number) {
   return (await fetch(`${GARAGE}${id}`, { method: 'DELETE' })).json();
 }
 
-export async function removeCar(el: HTMLElement) {
+export async function removeCar(el: HTMLElement): Promise<void> {
   const id = Number(el.getAttribute('car-id'));
   await deleteCar(id);
   await getRacingPage(saveState.pageGarageCount);
@@ -92,7 +90,7 @@ export async function updateCar(id: number, body: ICreateCar) {
   ).json();
 }
 
-export function onlockUpdateInputs(state: boolean) {
+export function onlockUpdateInputs(state: boolean): void {
   const updateCarTextInput: HTMLInputElement | null = document.querySelector('.garage__update-text-input');
   const updateCarColorInput: HTMLInputElement | null = document.querySelector('.garage__update-color-input');
   const updateCarBtn: HTMLButtonElement | null = document.querySelector('.garage__update-btn');
@@ -111,8 +109,6 @@ export async function updateNameColorCar(el: HTMLElement) {
   const updateCarTextInput: HTMLInputElement | null = document.querySelector('.garage__update-text-input');
   if (updateCarTextInput && name) updateCarTextInput.value = name;
 }
-
-// http://127.0.0.1:3000/engine/?id=43&status=started
 
 export async function startEngine(id: number): Promise<ICarSpeed> {
   return (

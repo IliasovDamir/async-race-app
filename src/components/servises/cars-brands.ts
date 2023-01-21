@@ -86,7 +86,6 @@ export const carFirstName: string[] = [
   'Volvo',
 ];
 
-// eslint-disable-next-line import/prefer-default-export
 export const carSubName: string[] = [
   'A3',
   'A4',

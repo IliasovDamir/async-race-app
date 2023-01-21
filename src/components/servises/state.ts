@@ -1,6 +1,6 @@
 import { IStateApp } from '../models/models';
 
-/* eslint-disable import/prefer-default-export */
+// eslint-disable-next-line import/prefer-default-export
 export const saveState: IStateApp = {
   pageGarageCount: 1,
   allPageGarage: 1,
